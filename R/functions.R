@@ -23,6 +23,7 @@ trimws_to_numeric = function(x){ trimws(x) %>% as.numeric()}
 #' @param LOCATION_NAME vector that include country and location in the same string
 #'
 #' @importFrom dplyr "%>%"
+#' @importFrom stringr str_to_title
 #'
 #' @return vector that contains only location
 #'
@@ -48,8 +49,9 @@ eq_location_clean <- function(LOCATION_NAME){
 #'
 #' @param Data Earthquake data
 #'
-#' @importFrom tidyr "%>%"
+#' @importFrom dplyr "%>%"
 #' @importFrom dplyr mutate
+#' @importFrom lubridate ymd years days
 #'
 #' @return Earthquake data Clean
 #'
@@ -61,15 +63,15 @@ eq_location_clean <- function(LOCATION_NAME){
 eq_clean_data <- function(Data){
 
         Data%>%
-                dplyr::mutate(MONTH = ifelse(is.na(get(MONTH)),0, get(MONTH)),
+                dplyr::mutate(MONTH = ifelse(is.na(MONTH),0, MONTH),
                               DAY = ifelse(is.na(DAY),0, DAY),
                               DEATHS = as.numeric(DEATHS),
                               EQ_PRIMARY = as.numeric(EQ_PRIMARY)) %>%
                 dplyr::mutate(DATE = ifelse(MONTH>0,
                                             ifelse(DAY>0,
-                                                   ymd("0000-01-01")+years(YEAR)+months(MONTH-1)+days(DAY-1),
-                                                   ymd("0000-01-01")+years(YEAR)+months(MONTH-1)+days(DAY)),
-                                            ymd("0000-01-01")+years(YEAR)+months(MONTH)+days(DAY)),
+                                                   lubridate::ymd("0000-01-01")+lubridate::years(YEAR)+months(MONTH-1)+lubridate::days(DAY-1),
+                                                   lubridate::ymd("0000-01-01")+lubridate::years(YEAR)+months(MONTH-1)+lubridate::days(DAY)),
+                                            lubridate::ymd("0000-01-01")+lubridate::years(YEAR)+months(MONTH)+lubridate::days(DAY)),
                               DATE = as.Date(DATE, origin = "1970-01-01"),
                               LATITUDE = trimws_to_numeric(LATITUDE),
                               LONGITUDE = trimws_to_numeric(LONGITUDE),
@@ -228,4 +230,67 @@ geom_timelinelabel <- function(mapping = NULL, data = NULL, stat = "identity",
                 inherit.aes = inherit.aes,
                 params = list(na.rm = na.rm, ...)
         )
+}
+
+
+#' Maps the epicenters
+#'
+#' More detailed description
+#'
+#' @param DATA Earthquake data
+#' @param annot_col column with information to show
+#' @param radius radius circle
+#'
+#' @importFrom dplyr "%>%"
+#' @import leaflet
+#'
+#' @return Earthquake data Clean
+#'
+#' @examples
+#' \dontrun{
+#'file_name <- system.file("extdata", "signif.txt", package = "Capstone")
+#'raw_data  <-  file_name %>%
+#'        readr::read_tsv() %>%
+#'        eq_clean_data() %>%
+#'        dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) %>%
+#'        dplyr::mutate(popup_text = eq_create_label(.)) %>%
+#'        eq_map(annot_col = "popup_text")
+#' }
+#' @export
+eq_map <- function(DATA, annot_col = "DATE", radius = 15){
+
+        print(leaflet() %>%
+                      addTiles() %>%
+                      addCircleMarkers(data = DATA, radius = radius,
+                                       lng = ~ LONGITUDE, lat = ~ LATITUDE, popup = ~ eval(expr = parse(text = annot_col))))
+
+
+}
+
+#' Creates an HTML label
+#'
+#' More detailed description
+#'
+#' @param DATA Earthquake data
+#'
+#' @return Earthquake data Clean
+#'
+#' @examples
+#' \dontrun{
+#' file_name <- system.file("extdata", "signif.txt", package = "Capstone")
+#' raw_data  <-  file_name %>%
+#'        readr::read_tsv() %>%
+#'        eq_clean_data() %>%
+#'        dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) %>%
+#'        dplyr::mutate(popup_text = eq_create_label(.)) %>%
+#'        eq_map(annot_col = "popup_text")
+#' }
+#' @export
+eq_create_label <- function(DATA){
+
+        paste(
+                ifelse(!is.na(DATA$LOCATION_NAME),paste("<b>Location:</b>",DATA$LOCATION_NAME), ""),
+                ifelse(!is.na(DATA$EQ_PRIMARY),paste("<b>Magnitude:</b>",DATA$EQ_PRIMARY), ""),
+                ifelse(!is.na(DATA$DEATHS),paste("<b>Total deaths:</b>",DATA$DEATHS), ""), sep = "<br/>")
+
 }
