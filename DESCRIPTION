@@ -1,6 +1,6 @@
 Package: Capstone
 Type: Package
-Imports: dplyr, stringr, tidyr
+Imports: dplyr, stringr, tidyr, scales, ggplot2, grid
 Title: Plot earthquake data (Title Case)
 Version: 0.1.0
 Author: Rodrigo Morales
