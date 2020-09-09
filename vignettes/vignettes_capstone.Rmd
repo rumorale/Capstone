@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 Cargamos packages y limpiamos datos
 
-```{r loading, echo=TRUE, eval=TRUE, message=F, warning=F}
+```{r loading, message=F, warning=F}
 library(Capstone)
 library(dplyr)
 library(readr)
@@ -32,12 +32,10 @@ clean_data <- file_name %>%
 
 ```
 
-Graficamos
+Graficamos para Mexico los terremotos posteriores al año 2000, donde cada pop up muestra lcoation, Magnitude y Total Deaths
 
-```{r plot, echo=TRUE, eval=TRUE, message=F, warning=F}
+```{r plot, message=F, warning=F}
 
-
-file_name <- system.file("extdata", "signif.txt", package = "Capstone")
 clean_data %>%
   dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) %>% 
   dplyr::mutate(popup_text = eq_create_label(.)) %>% 
@@ -45,6 +43,23 @@ clean_data %>%
 
 ```
 
+También podemos visualizar los terremotos historicos, como es el caso de USA y CHINA
+
+```{r timeline, message=F, warning=F}
+library(ggplot2)
+clean_data %>% 
+filter(COUNTRY %in% c("USA", "CHINA")) %>%
+filter(DATE > "2000-01-01" ) %>%
+filter(!is.na(EQ_PRIMARY) ) %>% 
+ggplot( aes(x = DATE, y = COUNTRY, color = DEATHS, size = EQ_PRIMARY, fill = DEATHS))+
+geom_timeline() +
+geom_timelinelabel(aes(label = LOCATION_NAME, n_max = 5)) + 
+        theme(legend.position="bottom",
+              axis.title.x = element_blank(),
+              axis.title.y = element_blank())+
+        labs(size = "Richter scale value", color = "# deaths")
+
+```
 
 
 
