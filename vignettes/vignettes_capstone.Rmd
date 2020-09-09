@@ -16,7 +16,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r packages, echo=FALSE}
+Cargamos packages y limpiamos datos
+
+```{r loading, echo=TRUE, eval=TRUE, message=F, warning=F}
 library(Capstone)
 library(dplyr)
 library(readr)
@@ -24,12 +26,25 @@ library(lubridate)
 library(leaflet)
 
 file_name <- system.file("extdata", "signif.txt", package = "Capstone")
-raw_data  <-  file_name %>%
+clean_data <- file_name %>%
               readr::read_tsv() %>%
-              eq_clean_data() %>% 
-              dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) %>% 
-              dplyr::mutate(popup_text = eq_create_label(.)) %>% 
-              eq_map(annot_col = "popup_text")
+              eq_clean_data() 
 
 ```
+
+Graficamos
+
+```{r plot, echo=TRUE, eval=TRUE, message=F, warning=F}
+
+
+file_name <- system.file("extdata", "signif.txt", package = "Capstone")
+clean_data %>%
+  dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) %>% 
+  dplyr::mutate(popup_text = eq_create_label(.)) %>% 
+  eq_map(annot_col = "popup_text")
+
+```
+
+
+
 
