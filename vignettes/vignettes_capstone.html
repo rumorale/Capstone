@@ -12,7 +12,7 @@
 
 <meta name="author" content="Rodrigo Morales" />
 
-<meta name="date" content="2020-09-09" />
+<meta name="date" content="2020-09-10" />
 
 <title>Capstone - earthquake plots</title>
 
@@ -34,6 +34,94 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -231,49 +319,50 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Capstone - earthquake plots</h1>
 <h4 class="author">Rodrigo Morales</h4>
-<h4 class="date">2020-09-09</h4>
+<h4 class="date">2020-09-10</h4>
 
 
 
-<pre><code>#&gt; 
-#&gt; Attaching package: &#39;dplyr&#39;
-#&gt; The following objects are masked from &#39;package:stats&#39;:
-#&gt; 
-#&gt;     filter, lag
-#&gt; The following objects are masked from &#39;package:base&#39;:
-#&gt; 
-#&gt;     intersect, setdiff, setequal, union
-#&gt; 
-#&gt; Attaching package: &#39;lubridate&#39;
-#&gt; The following objects are masked from &#39;package:base&#39;:
-#&gt; 
-#&gt;     date, intersect, setdiff, union
-#&gt; Parsed with column specification:
-#&gt; cols(
-#&gt;   .default = col_double(),
-#&gt;   FLAG_TSUNAMI = col_character(),
-#&gt;   SECOND = col_logical(),
-#&gt;   EQ_MAG_MB = col_logical(),
-#&gt;   EQ_MAG_MFA = col_logical(),
-#&gt;   COUNTRY = col_character(),
-#&gt;   STATE = col_character(),
-#&gt;   LOCATION_NAME = col_character(),
-#&gt;   MISSING = col_logical(),
-#&gt;   DAMAGE_MILLIONS_DOLLARS = col_logical(),
-#&gt;   TOTAL_MISSING = col_logical(),
-#&gt;   TOTAL_MISSING_DESCRIPTION = col_logical(),
-#&gt;   TOTAL_DAMAGE_MILLIONS_DOLLARS = col_logical()
-#&gt; )
-#&gt; See spec(...) for full column specifications.
-#&gt; Warning: 5663 parsing failures.
-#&gt;  row        col           expected actual                                                                                                           file
-#&gt; 1072 SECOND     1/0/T/F/TRUE/FALSE   5.0  &#39;C:/Users/rm_19/Desktop/Courses/Mastering Software Development in R Capstone/Capstone/inst/extdata/signif.txt&#39;
-#&gt; 1253 SECOND     1/0/T/F/TRUE/FALSE   35.0 &#39;C:/Users/rm_19/Desktop/Courses/Mastering Software Development in R Capstone/Capstone/inst/extdata/signif.txt&#39;
-#&gt; 1496 EQ_MAG_MFA 1/0/T/F/TRUE/FALSE   7.2  &#39;C:/Users/rm_19/Desktop/Courses/Mastering Software Development in R Capstone/Capstone/inst/extdata/signif.txt&#39;
-#&gt; 1497 EQ_MAG_MFA 1/0/T/F/TRUE/FALSE   7    &#39;C:/Users/rm_19/Desktop/Courses/Mastering Software Development in R Capstone/Capstone/inst/extdata/signif.txt&#39;
-#&gt; 1498 EQ_MAG_MFA 1/0/T/F/TRUE/FALSE   7.1  &#39;C:/Users/rm_19/Desktop/Courses/Mastering Software Development in R Capstone/Capstone/inst/extdata/signif.txt&#39;
-#&gt; .... .......... .................. ...... ..............................................................................................................
-#&gt; See problems(...) for more details.</code></pre>
+<div id="objetivo" class="section level1">
+<h1>Objetivo</h1>
+<p>Graficar la localizacion historica de los terremotos contenidos en NOAA earthquakes dataset</p>
+</div>
+<div id="ejemplo" class="section level1">
+<h1>Ejemplo</h1>
+<p>Cargamos packages y limpiamos datos, usando “eq_clean_data”. Ademas, seleccionamos un conjunto de la base de datos para usar de ejemplo.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(Capstone)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(readr)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">library</span>(lubridate)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">library</span>(leaflet)</span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a>file_name &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;signif.txt&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;Capstone&quot;</span>)</span>
+<span id="cb1-8"><a href="#cb1-8"></a>clean_data &lt;-<span class="st"> </span>file_name <span class="op">%&gt;%</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="st">              </span>readr<span class="op">::</span><span class="kw">read_tsv</span>() <span class="op">%&gt;%</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="st">              </span><span class="kw">eq_clean_data</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="st">              </span><span class="kw">filter</span>(COUNTRY <span class="op">==</span><span class="st"> &quot;CHILE&quot;</span>, LOCATION_NAME <span class="op">==</span><span class="st"> &quot;Santiago&quot;</span>) </span>
+<span id="cb1-12"><a href="#cb1-12"></a>              </span></code></pre></div>
+<p>Graficamos para Chile los terremotos ocurridos historicamente en Santiago, CHILE.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb2-2"><a href="#cb2-2"></a>clean_data <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">ggplot</span>( <span class="kw">aes</span>(<span class="dt">x =</span> DATE, </span>
+<span id="cb2-4"><a href="#cb2-4"></a>            <span class="dt">y =</span> COUNTRY, </span>
+<span id="cb2-5"><a href="#cb2-5"></a>            <span class="dt">color =</span> DEATHS, </span>
+<span id="cb2-6"><a href="#cb2-6"></a>            <span class="dt">size =</span> EQ_PRIMARY, </span>
+<span id="cb2-7"><a href="#cb2-7"></a>            <span class="dt">fill =</span> DEATHS)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="kw">geom_timeline</span>() <span class="op">+</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="kw">geom_timelinelabel</span>(<span class="kw">aes</span>(<span class="dt">label =</span> LOCATION_NAME, <span class="dt">n_max =</span> <span class="dv">5</span>)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="st">        </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb2-11"><a href="#cb2-11"></a>              <span class="dt">axis.title.x =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb2-12"><a href="#cb2-12"></a>              <span class="dt">axis.title.y =</span> <span class="kw">element_blank</span>())<span class="op">+</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="st">        </span><span class="kw">labs</span>(<span class="dt">size =</span> <span class="st">&quot;Richter scale value&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;# deaths&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>y ahora geográficamente. Cada pop up muestra location, Magnitude y Total deaths</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2"></a>clean_data <span class="op">%&gt;%</span><span class="st">  </span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">popup_text =</span> <span class="kw">eq_create_label</span>(.)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="st">  </span><span class="kw">eq_map</span>(<span class="dt">annot_col =</span> <span class="st">&quot;popup_text&quot;</span>)</span></code></pre></div>
+</div>
 
 
 

@@ -16,7 +16,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-Cargamos packages y limpiamos datos
+# Objetivo
+Graficar la localizacion historica de los terremotos contenidos en NOAA earthquakes dataset
+
+# Ejemplo
+
+Cargamos packages y limpiamos datos, usando "eq_clean_data". Ademas, seleccionamos un conjunto de la base de datos para usar de ejemplo.
 
 ```{r loading, message=F, warning=F}
 library(Capstone)
@@ -28,30 +33,21 @@ library(leaflet)
 file_name <- system.file("extdata", "signif.txt", package = "Capstone")
 clean_data <- file_name %>%
               readr::read_tsv() %>%
-              eq_clean_data() 
-
+              eq_clean_data() %>% 
+              filter(COUNTRY == "CHILE", LOCATION_NAME == "Santiago") 
+              
 ```
 
-Graficamos para Mexico los terremotos posteriores al año 2000, donde cada pop up muestra lcoation, Magnitude y Total Deaths
+Graficamos para Chile los terremotos ocurridos historicamente en Santiago, CHILE. 
 
-```{r plot, message=F, warning=F}
-
-clean_data %>%
-  dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) %>% 
-  dplyr::mutate(popup_text = eq_create_label(.)) %>% 
-  eq_map(annot_col = "popup_text")
-
-```
-
-También podemos visualizar los terremotos historicos, como es el caso de USA y CHINA
-
-```{r timeline, message=F, warning=F}
+```{r timeline}
 library(ggplot2)
 clean_data %>% 
-filter(COUNTRY %in% c("USA", "CHINA")) %>%
-filter(DATE > "2000-01-01" ) %>%
-filter(!is.na(EQ_PRIMARY) ) %>% 
-ggplot( aes(x = DATE, y = COUNTRY, color = DEATHS, size = EQ_PRIMARY, fill = DEATHS))+
+ggplot( aes(x = DATE, 
+            y = COUNTRY, 
+            color = DEATHS, 
+            size = EQ_PRIMARY, 
+            fill = DEATHS)) + 
 geom_timeline() +
 geom_timelinelabel(aes(label = LOCATION_NAME, n_max = 5)) + 
         theme(legend.position="bottom",
@@ -60,6 +56,17 @@ geom_timelinelabel(aes(label = LOCATION_NAME, n_max = 5)) +
         labs(size = "Richter scale value", color = "# deaths")
 
 ```
+
+y ahora geográficamente. Cada pop up muestra location, Magnitude y Total deaths
+
+```{r plot, message=F, warning=F}
+
+clean_data %>%  
+  dplyr::mutate(popup_text = eq_create_label(.)) %>% 
+  eq_map(annot_col = "popup_text")
+
+```
+
 
 
 
